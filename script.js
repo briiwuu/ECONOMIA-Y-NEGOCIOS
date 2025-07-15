@@ -99,7 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
     coursesData.forEach(course => {
         if (course.Aprobración === 1) {
             approvedCourses.add(course.Curso.toUpperCase());
-            totalCredits += parseInt(course.Creditos) || 0; // Sumar créditos si está aprobado
+            // Asegúrate de que los créditos sean números antes de sumar
+            totalCredits += parseInt(course.Creditos || 0); 
         }
     });
 
@@ -135,17 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Verificar prerequisitos de cursos específicos
                 if (course['Pre-requisito']) {
-                    const prerequisites = course['Pre-requisito'].split(',').map(p => p.trim().toUpperCase());
-                    missingPrerequisites = prerequisites.filter(p => p && !approvedCourses.has(p));
+                    const prerequisites = course['Pre-requisito'].split(',').map(p => p.trim().toUpperCase()).filter(p => p !== ""); // Filtra vacíos
+                    missingPrerequisites = prerequisites.filter(p => !approvedCourses.has(p));
                     if (missingPrerequisites.length > 0) {
                         isLocked = true;
                     }
                 }
 
                 // Verificar requisito de créditos acumulados
-                if (course['Cred.req.'] > 0 && totalCredits < course['Cred.req.']) {
+                if (parseInt(course['Cred.req.']) > 0 && totalCredits < parseInt(course['Cred.req.'])) {
                     isLocked = true;
-                    if (!missingPrerequisites.includes(`Créditos: ${course['Cred.req.']}`)) { // Evitar duplicar mensaje
+                    // Solo añadir el mensaje si no hay prerequisitos de curso faltantes o si el mensaje no está ya
+                    if (missingPrerequisites.length === 0 || !missingPrerequisites.some(p => p.includes("Créditos acumulados"))) {
                         missingPrerequisites.push(`Créditos acumulados: ${course['Cred.req.']} requeridos (${totalCredits} actuales)`);
                     }
                 }
@@ -158,11 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     courseCard.classList.add('unlocked'); // Si no está aprobado ni bloqueado, está desbloqueado
                 }
 
+                // Determinar si es SIU
+                const isSiu = course['Mención'] && course['Mención'].toUpperCase().includes('SIU');
+
                 courseCard.innerHTML = `
+                    <div class="betty-icon"></div>
                     <h3>${course.Curso}</h3>
-                    <p>Créditos: <span class="credits">${course.Creditos || 'N/A'}</span></p>
-                    <p>Condición: ${course.Condiciones}</p>
-                    ${course['Mención'] ? `<p>Mención: ${course['Mención']}</p>` : ''}
+                    <p>Condición: <strong>${course.Condiciones}</strong></p>
+                    ${isSiu ? `<p>Es un curso <strong>SIU</strong></p>` : ''}
                     <input type="checkbox" ${isApproved ? 'checked' : ''} ${isLocked ? 'disabled' : ''}>
                     ${isLocked && missingPrerequisites.length > 0 ? `<div class="prerequisites-tooltip">${missingPrerequisites.join(', ')}</div>` : ''}
                 `;
@@ -171,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const checkbox = courseCard.querySelector('input[type="checkbox"]');
                 checkbox.addEventListener('change', (event) => {
                     const courseName = courseCard.dataset.courseName;
-                    const courseCredits = parseInt(course.Creditos) || 0;
+                    const courseCredits = parseInt(course.Creditos || 0);
 
                     if (event.target.checked) {
                         // Marcar como aprobado
@@ -180,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             totalCredits += courseCredits;
                         } else {
                             event.target.checked = false; // Desmarcar si no se pudo aprobar
-                            alert(`No puedes aprobar "${course.Curso}" porque te faltan los siguientes prerequisitos: ${missingPrerequisites.join(', ')}.`);
+                            // No es necesario alertar aquí, el tooltip ya lo muestra
                         }
                     } else {
                         // Desmarcar como aprobado
@@ -211,8 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (tooltip) tooltip.classList.remove('show');
                     });
                 }
-
-
+                
                 cycleDiv.appendChild(courseCard);
             });
             mallaContainer.appendChild(cycleDiv);
