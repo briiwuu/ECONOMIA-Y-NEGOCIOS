@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Datos de los cursos (tu tabla convertida a un array de objetos)
     const coursesData = [
-       { "Ciclo": 1, "Curso": "ADMINISTRACIÓN DE NEGOCIOS", "Creditos": 4, "Condiciones": "Oblig.", "Pre-requisito": "", "Cred.req.": 0, "Mención": "", "Aprobración": 1, "Nota": 11, "Vez": 1, "Período": "2023-02" },
+       { "Ciclo": 1, "Curso": "ADMINISTRACIÓN PARA LOS NEGOCIOS", "Creditos": 4, "Condiciones": "Oblig.", "Pre-requisito": "", "Cred.req.": 0, "Mención": "", "Aprobración": 1, "Nota": 11, "Vez": 1, "Período": "2023-02" },
         { "Ciclo": 1, "Curso": "AMERICAN LITERATURE", "Creditos": 3, "Condiciones": "Elect.", "Pre-requisito": "", "Cred.req.": 0, "Mención": "ENI-SIU IBS", "Aprobración": 0, "Nota": 0, "Vez": 1, "Período": "2024-02" },
         { "Ciclo": 1, "Curso": "CORRIENTES DEL PENSAMIENTO ECONÓMICO", "Creditos": 4, "Condiciones": "Oblig.", "Pre-requisito": "", "Cred.req.": 0, "Mención": "", "Aprobración": 1, "Nota": 11, "Vez": 1, "Período": "2023-02" },
         { "Ciclo": 1, "Curso": "ENGLISH I", "Creditos": 0, "Condiciones": "Oblig.", "Pre-requisito": "NIVELACIÓN EN INGLÉS", "Cred.req.": 0, "Mención": "", "Aprobración": 0, "Nota": 0, "Vez": 1, "Período": "2025-01" },
